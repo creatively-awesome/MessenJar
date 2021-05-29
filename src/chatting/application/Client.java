@@ -25,6 +25,8 @@ public class Client extends JFrame implements ActionListener{
     static DataInputStream dataInputStream;
     static DataOutputStream dataOutputStream;
 
+    boolean isTyping;
+
     Client() {
         p1 = new JPanel();
         p1.setLayout(null);
@@ -102,6 +104,18 @@ public class Client extends JFrame implements ActionListener{
         user2Status.setBounds(100, 24, 100, 30);
         p1.add(user2Status);
 
+        //Setting Active now to Typing dynamically
+        Timer timer = new Timer(1, new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                if(!isTyping) {
+                    user2Status.setText("Active Now");
+                }
+            }
+        });
+
+        timer.setInitialDelay(1000);
+
         //Adding Text Area to display sent messages
         sentTextArea = new JTextArea();
         sentTextArea.setBounds(255, 65, 240, 680);
@@ -130,6 +144,22 @@ public class Client extends JFrame implements ActionListener{
         textField.setBounds(5, 750, 360, 40);
         textField.setFont(new Font("SAN_SARIF", Font.PLAIN, 17));
         add(textField);
+        textField.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyPressed(KeyEvent keyEvent) {
+                user2Status.setText("Typing...");
+                timer.stop();
+                isTyping = true;
+            }
+
+            @Override
+            public void keyReleased(KeyEvent keyEvent) {
+                isTyping = false;
+                if(!timer.isRepeats()) {
+                    timer.start();
+                }
+            }
+        });
 
         //Adding send button next to textField
         sendButton = new JButton("Send");
